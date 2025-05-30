@@ -53,11 +53,20 @@ export default function Expenses() {
   async function handleAdd(expense) {
     setLoading(true);
     setError("");
+    // Ensure outgoing data is in correct shape: never pass blank string for category_id
+    const outgoing = {
+      ...expense,
+      category_id: expense.category_id ? expense.category_id : null,
+      user_id: user.id,
+    };
     const { error } = await supabase
       .from("expenses")
-      .insert([{ ...expense, user_id: user.id }]);
-    if (error) setError(error.message);
-    else {
+      .insert([outgoing]);
+    if (error) {
+      setError(error.message);
+      setLoading(false);
+      return; // Don't close form or reload if failed
+    } else {
       setShowForm(false);
       fetchExpenses();
     }

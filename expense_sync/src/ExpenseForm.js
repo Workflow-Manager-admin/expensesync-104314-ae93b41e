@@ -48,11 +48,12 @@ export default function ExpenseForm({
       setError("Amount must be a number.");
       return;
     }
+    // Ensure category_id is null, not empty string
     onSubmit({
       amount: parseFloat(amount),
       currency,
       date,
-      category_id: categoryId || null,
+      category_id: categoryId ? categoryId : null,
       notes: notes.trim()
     });
   }

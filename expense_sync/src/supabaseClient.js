@@ -15,8 +15,8 @@
    * 
    * Do not commit actual keys to version control! Only use environment variables.
    */
-  const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
-  const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+  const supabaseUrl = process.env.REACT_APP_SUPABASE_URL||'https://uzdwzgadtsktzdbylidv.supabase.co';
+  const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY||'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV6ZHd6Z2FkdHNrdHpkYnlsaWR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2MTIwMzAsImV4cCI6MjA2NDE4ODAzMH0.QMg1DjfLApwLpYYjxvuFz6Puy1PkHFKX1O1sbMcFaU4';
 
   if (!supabaseUrl || !supabaseAnonKey) {
     // You may handle missing config gracefully, for now just warn for dev mode.
