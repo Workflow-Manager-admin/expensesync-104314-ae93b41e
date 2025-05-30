@@ -11,7 +11,62 @@ This project provides a minimal React template with a clean, modern UI and minim
 
 ## Getting Started
 
-In the project directory, you can run:
+### Supabase Authentication Setup
+
+ExpenseSync uses Supabase to provide user authentication (sign up, login, logout) and user-specific data isolation.  
+**Before you can connect your React app to Supabase, you must enable authentication and obtain two environment variables: `SUPABASE_URL` and `SUPABASE_ANON_KEY`.**
+
+#### Step-by-Step: Enable Email/Password Auth on Supabase
+
+1. **Go to the Supabase Dashboard**  
+   Log in to your Supabase project at [https://app.supabase.com/](https://app.supabase.com/). Select your project.
+
+2. **Open the Authentication Settings**  
+   In the left sidebar, click on **"Authentication"** and then **"Providers"**.
+
+3. **Enable Email Auth**  
+   - Locate the "Email" provider.
+   - Toggle the switch to **enable** "Email" as an authentication method.
+   - (Optional) Configure the email templates and SMTP settings as desired. For most development cases, Supabase provides built-in email delivery.
+
+4. **(Optional) Restrict or allow signups**  
+   On the "Settings" tab, you can allow email signups immediately, or restrict them as needed for your app.
+
+5. **Save Changes**  
+   Click "Save" at the bottom if you changed any settings.
+
+#### Getting Your Supabase Project Keys
+
+1. In the Supabase Dashboard, in the left sidebar click on **Project Settings** (gear icon).
+2. Go to the **"API"** section.
+3. Locate the following (copy for use in your frontend app):
+   - **Project URL** – This will be your `SUPABASE_URL`
+   - **anon public API key** – This will be your `SUPABASE_ANON_KEY`
+
+**DO NOT share the anon or service keys publicly. Only the anon key should be used in client applications.**
+
+#### Setting Environment Variables
+
+For local development, set the following in a `.env` file in `expense_sync/`:
+
+```env
+REACT_APP_SUPABASE_URL=your_supabase_url
+REACT_APP_SUPABASE_ANON_KEY=your_anon_key
+```
+
+If you are deploying, configure these environment variables in your hosting provider (Vercel, Netlify, etc) as well.
+
+#### Usage in React
+
+When integrating Supabase in your React code (eg. with `@supabase/supabase-js`), access the environment variables as follows:
+```js
+const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
+const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+```
+
+> For a full guide on connecting React to Supabase Auth, see the [Supabase Docs: Auth Quickstart](https://supabase.com/docs/guides/auth/quickstarts/react).
+
+---
 
 ### `npm start`
 
