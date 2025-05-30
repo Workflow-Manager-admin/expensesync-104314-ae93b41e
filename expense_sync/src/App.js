@@ -4,6 +4,8 @@ import { AuthProvider, useAuth } from "./useAuth";
 import Signup from "./Signup";
 import Login from "./Login";
 import Logout from "./Logout";
+import Expenses from "./Expenses";
+import Categories from "./Categories";
 
 function AppContent() {
   const { user, authLoading } = useAuth();
@@ -57,10 +59,13 @@ function AppContent() {
                 : <Signup />
             )}
             {user && (
-              <>
-                {/* Place main dashboard UI here when user is authenticated */}
-                <button className="btn btn-large">Expense Dashboard (Coming Soon)</button>
-              </>
+              <div style={{display: "flex", gap: 24, alignItems: "flex-start", flexWrap: "wrap"}}>
+                {/* Categories and Expenses sidebar/dashboard */}
+                <Categories />
+                <div style={{flex: 1, minWidth:300}}>
+                  <Expenses />
+                </div>
+              </div>
             )}
           </div>
         </div>
