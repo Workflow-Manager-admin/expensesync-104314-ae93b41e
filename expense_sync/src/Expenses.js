@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { supabase } from "./supabaseClient";
 import { useAuth } from "./useAuth";
 import ExpenseForm from "./ExpenseForm";
@@ -6,6 +6,7 @@ import ExpenseForm from "./ExpenseForm";
 /**
  * PUBLIC_INTERFACE
  * Expenses - CRUD for user expenses, using ExpenseForm for add/edit.
+ * Also integrates Supabase real-time subscriptions for live list auto-refresh.
  */
 export default function Expenses() {
   const { user } = useAuth();
@@ -15,6 +16,9 @@ export default function Expenses() {
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
+
+  // We'll store a ref so we can unsubscribe easily on cleanup
+  const realtimeSubRef = useRef(null);
 
   // Fetch user's categories
   async function fetchCategories() {
@@ -41,11 +45,39 @@ export default function Expenses() {
     setLoading(false);
   }
 
+  // On mount: fetch data and setup Supabase real-time listener for this user's expenses
   useEffect(() => {
     if (user) {
       fetchCategories();
       fetchExpenses();
+
+      // Set up real-time subscription on 'expenses' table filtered by user_id
+      // https://supabase.com/docs/guides/real-time
+      // We want to auto-refresh any time an expense INSERT, UPDATE, or DELETE triggers for this user.
+      // Clean up the channel on unmount or when user changes.
+      const channel = supabase
+        .channel('realtime:expenses:' + user.id)
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'expenses', filter: `user_id=eq.${user.id}` },
+          (payload) => {
+            // For any insert/update/delete, just re-fetch expenses.
+            fetchExpenses(); // Ideally can optimize, but re-fetch keeps it simple for now.
+          }
+        )
+        .subscribe();
+
+      realtimeSubRef.current = channel;
+
+      return () => {
+        // Cleanup: Remove previous channel subscription
+        if (realtimeSubRef.current) {
+          supabase.removeChannel(realtimeSubRef.current);
+          realtimeSubRef.current = null;
+        }
+      };
     }
+
     // eslint-disable-next-line
   }, [user]);
 
