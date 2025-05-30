@@ -22,7 +22,7 @@ export default function Categories({ onCategoryChange }) {
     const { data, error } = await supabase
       .from("categories")
       .select("*")
-      .eq("user_id", user.id)
+      .eq("user_id", user.id) // Ensures client-side data isolation by user
       .order("created_at", { ascending: true });
     if (error) setError(error.message);
     setCategories(data || []);
